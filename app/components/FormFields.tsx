@@ -9,6 +9,7 @@ interface InputFieldProps {
   value: string;
   onChange: (value: string) => void;
   error?: string;
+  maxLength?: number;
   required?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function InputField({
   value,
   onChange,
   error,
+  maxLength,
   required,
 }: InputFieldProps) {
   return (
@@ -31,6 +33,7 @@ export function InputField({
         type={type}
         placeholder={placeholder}
         value={value}
+        maxLength={maxLength}
         onChange={(e) => onChange(e.target.value)}
         className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
           error
@@ -50,6 +53,7 @@ interface TextAreaProps {
   onChange: (value: string) => void;
   rows?: number;
   error?: string;
+  maxLength?: number;
   required?: boolean;
 }
 
@@ -60,6 +64,7 @@ export function TextArea({
   onChange,
   rows = 4,
   error,
+  maxLength,
   required,
 }: TextAreaProps) {
   return (
@@ -71,6 +76,7 @@ export function TextArea({
       <textarea
         placeholder={placeholder}
         value={value}
+        maxLength={maxLength}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
         className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
@@ -90,6 +96,7 @@ interface TagInputProps {
   onAddTag: (tag: string) => void;
   onRemoveTag: (index: number) => void;
   placeholder?: string;
+  maxLength?: number;
 }
 
 export function TagInput({
@@ -98,6 +105,7 @@ export function TagInput({
   onAddTag,
   onRemoveTag,
   placeholder,
+  maxLength,
 }: TagInputProps) {
   const [input, setInput] = useState("");
 
@@ -118,6 +126,7 @@ export function TagInput({
         type="text"
         placeholder={placeholder || "Type and press Enter"}
         value={input}
+        maxLength={maxLength}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary mb-2"

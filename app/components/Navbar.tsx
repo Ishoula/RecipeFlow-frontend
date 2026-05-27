@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuthStore } from "@/app/lib/auth-store";
 import { useRouter } from "next/navigation";
+import { ChefHat, BookOpen, PlusCircle, LogOut, LogIn, UserPlus, User } from "lucide-react";
 
 export function Navbar() {
   const router = useRouter();
@@ -14,12 +15,13 @@ export function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              🍳 RecipeFlow
+            <Link href="/" className="text-2xl font-bold text-primary flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <ChefHat size={28} strokeWidth={2.5} /> 
+              <span className="tracking-tight">RecipeFlow</span>
             </Link>
           </div>
 
@@ -28,23 +30,26 @@ export function Navbar() {
               <>
                 <Link
                   href="/recipes"
-                  className="text-gray-700 hover:text-primary"
+                  className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-medium"
                 >
-                  Recipes
+                  <BookOpen size={18} /> Recipes
                 </Link>
                 <Link
                   href="/recipes/new"
-                  className="text-gray-700 hover:text-primary"
+                  className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-medium"
                 >
-                  + New Recipe
+                  <PlusCircle size={18} /> New Recipe
                 </Link>
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-700">{user?.username}</span>
+                <div className="flex items-center gap-4 ml-2 pl-4 border-l border-gray-200">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full">
+                    <User size={16} className="text-primary" />
+                    {user?.username}
+                  </div>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-600"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-lg hover:brightness-90 transition-all shadow-sm hover:shadow"
                   >
-                    Logout
+                    <LogOut size={18} /> Logout
                   </button>
                 </div>
               </>
@@ -52,15 +57,15 @@ export function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="text-gray-700 hover:text-primary"
+                  className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-medium"
                 >
-                  Login
+                  <LogIn size={18} /> Login
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-600"
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-lg hover:brightness-90 transition-all shadow-sm hover:shadow"
                 >
-                  Register
+                  <UserPlus size={18} /> Register
                 </Link>
               </>
             )}

@@ -46,7 +46,7 @@ export default function RecipesPage() {
               <h1 className="text-4xl font-bold text-dark">All Recipes</h1>
               <Link
                 href="/recipes/new"
-                className="px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-red-600 transition"
+                className="px-6 py-3 bg-primary text-white font-bold rounded-lg hover:brightness-90 transition flex items-center gap-2"
               >
                 + Add Recipe
               </Link>
@@ -69,7 +69,7 @@ export default function RecipesPage() {
                 </p>
                 <Link
                   href="/recipes/new"
-                  className="inline-block px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-red-600 transition"
+                  className="inline-block px-6 py-3 bg-primary text-white font-bold rounded-lg hover:brightness-90 transition"
                 >
                   Create Recipe
                 </Link>

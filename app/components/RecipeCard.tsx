@@ -1,5 +1,7 @@
 "use client";
 
+import { Clock, User, ThumbsUp, ThumbsDown, Eye, MessageSquare } from 'lucide-react';
+
 export interface Recipe {
   id: number;
   name: string;
@@ -52,14 +54,14 @@ export function RecipeCard({ recipe, onClickRecipe }: RecipeCardProps) {
           {recipe.description}
         </p>
         <div className="flex justify-between items-center text-xs text-gray-500 mb-3">
-          <span>⏱️ {recipe.time}</span>
-          <span>👤 {username}</span>
+          <span className="flex items-center gap-1"><Clock size={14} /> {recipe.time}</span>
+          <span className="flex items-center gap-1"><User size={14} /> {username}</span>
         </div>
-        <div className="flex gap-3 text-sm">
-          <span>👍 {recipe.likes}</span>
-          <span>👎 {recipe.dislikes}</span>
-          <span>👁️ {recipe.views}</span>
-          <span>💬 {recipe.comments}</span>
+        <div className="flex gap-3 text-sm text-gray-600">
+          <span className="flex items-center gap-1"><ThumbsUp size={14} /> {recipe.likes}</span>
+          <span className="flex items-center gap-1"><ThumbsDown size={14} /> {recipe.dislikes}</span>
+          <span className="flex items-center gap-1"><Eye size={14} /> {recipe.views}</span>
+          <span className="flex items-center gap-1"><MessageSquare size={14} /> {recipe.comments}</span>
         </div>
       </div>
     </div>

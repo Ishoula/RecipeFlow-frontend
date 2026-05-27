@@ -62,8 +62,8 @@ export default function RegisterPage() {
         password: formData.password,
       });
 
-      const { token, id, username, email } = loginResponse.data;
-      setAuth({ id, username, email }, token);
+      const { token, user } = loginResponse.data;
+      setAuth(user, token);
       router.push('/recipes');
     } catch (error: any) {
       setErrors({
@@ -78,7 +78,7 @@ export default function RegisterPage() {
     <main>
       <Navbar />
       <div className="min-h-screen bg-light flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <div className="bg-surface rounded-lg shadow-lg p-8 w-full max-w-md">
           <h1 className="text-3xl font-bold text-dark mb-6 text-center">Register</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -130,7 +130,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 bg-primary text-white font-bold rounded-lg hover:bg-red-600 transition disabled:opacity-50"
+              className="w-full py-2 bg-primary text-white font-bold rounded-lg hover:brightness-90 transition disabled:opacity-50"
             >
               {loading ? 'Registering...' : 'Register'}
             </button>

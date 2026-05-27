@@ -29,8 +29,8 @@ export default function LoginPage() {
 
     try {
       const response = await authAPI.login(formData);
-      const { token, id, username, email } = response.data;
-      setAuth({ id, username, email }, token);
+      const { token, user } = response.data;
+      setAuth(user, token);
       router.push('/recipes');
     } catch (error: any) {
       setErrors({
@@ -45,9 +45,8 @@ export default function LoginPage() {
     <main>
       <Navbar />
       <div className="min-h-screen bg-light flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+        <div className="bg-surface rounded-lg shadow-lg p-8 w-full max-w-md">
           <h1 className="text-3xl font-bold text-dark mb-6 text-center">Login</h1>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <InputField
               label="Username"
@@ -57,7 +56,6 @@ export default function LoginPage() {
               error={errors.username}
               required
             />
-
             <InputField
               label="Password"
               type="password"
@@ -67,24 +65,21 @@ export default function LoginPage() {
               error={errors.password}
               required
             />
-
             {errors.submit && (
               <div className="p-3 bg-red-100 border border-red-400 rounded text-red-700">
                 {errors.submit}
               </div>
             )}
-
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 bg-primary text-white font-bold rounded-lg hover:bg-red-600 transition disabled:opacity-50"
+              className="w-full py-2 bg-primary text-white font-bold rounded-lg hover:brightness-90 transition disabled:opacity-50"
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
-
           <p className="text-center text-gray-600 mt-6">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-primary font-bold hover:underline">
               Register
             </Link>

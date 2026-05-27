@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Clock, Eye, ThumbsUp, ThumbsDown, Wrench, Utensils, Tag, List, ArrowLeft } from 'lucide-react';
 import { Recipe } from '@/app/components/RecipeCard';
 import { recipeAPI } from '@/app/lib/api';
 import { Navbar } from '@/app/components/Navbar';
@@ -107,12 +108,12 @@ export default function RecipeDetailPage() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <Link
               href="/recipes"
-              className="text-primary font-bold hover:underline mb-6 inline-block"
+              className="text-primary font-bold hover:underline mb-6 inline-flex items-center gap-2"
             >
-              ← Back to Recipes
+              <ArrowLeft size={20} /> Back to Recipes
             </Link>
 
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="bg-surface rounded-lg shadow-lg overflow-hidden">
               <div className="relative w-full h-96 bg-gray-200">
                 <img
                   src={recipe.imageUrl}
@@ -137,20 +138,20 @@ export default function RecipeDetailPage() {
                 <p className="text-gray-700 text-lg mb-6">{recipe.description}</p>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                  <div className="bg-light p-4 rounded text-center">
-                    <p className="text-2xl font-bold text-primary">⏱️</p>
+                  <div className="bg-light p-4 rounded text-center flex flex-col items-center">
+                    <Clock className="text-primary mb-2" size={28} />
                     <p className="text-gray-600">{recipe.time}</p>
                   </div>
-                  <div className="bg-light p-4 rounded text-center">
-                    <p className="text-2xl font-bold text-secondary">👁️</p>
+                  <div className="bg-light p-4 rounded text-center flex flex-col items-center">
+                    <Eye className="text-secondary mb-2" size={28} />
                     <p className="text-gray-600">{recipe.views} views</p>
                   </div>
-                  <div className="bg-light p-4 rounded text-center">
-                    <p className="text-2xl font-bold text-green-500">👍</p>
+                  <div className="bg-light p-4 rounded text-center flex flex-col items-center">
+                    <ThumbsUp className="text-primary mb-2" size={28} />
                     <p className="text-gray-600">{recipe.likes} likes</p>
                   </div>
-                  <div className="bg-light p-4 rounded text-center">
-                    <p className="text-2xl font-bold text-red-500">👎</p>
+                  <div className="bg-light p-4 rounded text-center flex flex-col items-center">
+                    <ThumbsDown className="text-secondary mb-2" size={28} />
                     <p className="text-gray-600">{recipe.dislikes} dislikes</p>
                   </div>
                 </div>
@@ -158,30 +159,30 @@ export default function RecipeDetailPage() {
                 <div className="flex gap-4 mb-8">
                   <button
                     onClick={handleLike}
-                    className={`px-6 py-2 rounded-lg font-bold transition ${
+                    className={`px-6 py-2 rounded-lg font-bold transition flex items-center gap-2 ${
                       isLiked
-                        ? 'bg-green-500 text-white'
-                        : 'bg-light text-gray-700 hover:bg-gray-300'
+                        ? 'bg-primary text-white'
+                        : 'bg-light text-gray-700 hover:brightness-90'
                     }`}
                   >
-                    👍 Like
+                    <ThumbsUp size={18} /> Like
                   </button>
                   <button
                     onClick={handleDislike}
-                    className={`px-6 py-2 rounded-lg font-bold transition ${
+                    className={`px-6 py-2 rounded-lg font-bold transition flex items-center gap-2 ${
                       isDisliked
-                        ? 'bg-red-500 text-white'
-                        : 'bg-light text-gray-700 hover:bg-gray-300'
+                        ? 'bg-secondary text-white'
+                        : 'bg-light text-gray-700 hover:brightness-90'
                     }`}
                   >
-                    👎 Dislike
+                    <ThumbsDown size={18} /> Dislike
                   </button>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
                   <div>
-                    <h2 className="text-2xl font-bold text-dark mb-4">
-                      🛠️ Equipments
+                    <h2 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                      <Wrench className="text-primary" size={24} /> Equipments
                     </h2>
                     <ul className="space-y-2">
                       {recipe.equipments.map((equipment, idx) => (
@@ -193,8 +194,8 @@ export default function RecipeDetailPage() {
                   </div>
 
                   <div>
-                    <h2 className="text-2xl font-bold text-dark mb-4">
-                      🥘 Ingredients
+                    <h2 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                      <Utensils className="text-primary" size={24} /> Ingredients
                     </h2>
                     <ul className="space-y-2">
                       {recipe.ingredients.map((ingredient, idx) => (
@@ -206,8 +207,8 @@ export default function RecipeDetailPage() {
                   </div>
 
                   <div>
-                    <h2 className="text-2xl font-bold text-dark mb-4">
-                      🏷️ Tags
+                    <h2 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                      <Tag className="text-primary" size={24} /> Tags
                     </h2>
                     <div className="flex flex-wrap gap-2">
                       {recipe.tags.map((tag, idx) => (
@@ -223,8 +224,8 @@ export default function RecipeDetailPage() {
                 </div>
 
                 <div className="mt-8">
-                  <h2 className="text-2xl font-bold text-dark mb-4">
-                    📝 Instructions
+                  <h2 className="text-2xl font-bold text-dark mb-4 flex items-center gap-2">
+                    <List className="text-primary" size={24} /> Instructions
                   </h2>
                   <ol className="space-y-3">
                     {recipe.instructions.map((instruction, idx) => (
