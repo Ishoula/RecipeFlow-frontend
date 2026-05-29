@@ -45,6 +45,9 @@ export const recipeAPI = {
     likeRecipe: (id: number) => apiClient.post(`/recipes/${id}/like`),
 
     dislikeRecipe: (id: number) => apiClient.post(`/recipes/${id}/dislike`),
+
+    commentRecipe: (id: number, data: { comment: string }) =>
+        apiClient.post(`/recipes/${id}/comments`, data),
 };
 
 export default apiClient;

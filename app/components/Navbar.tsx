@@ -56,6 +56,12 @@ export function Navbar() {
             ) : (
               <>
                 <Link
+                  href="/recipes"
+                  className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-medium"
+                >
+                  <BookOpen size={18} /> Recipes
+                </Link>
+                <Link
                   href="/login"
                   className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-medium"
                 >

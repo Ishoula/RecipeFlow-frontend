@@ -1,24 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Clock, Eye, ThumbsUp, ThumbsDown, Wrench, Utensils, Tag, List, ArrowLeft } from 'lucide-react';
+import { Clock, Eye, ThumbsUp, ThumbsDown, Wrench, Utensils, Tag, List, ArrowLeft, MessageSquare } from 'lucide-react';
 import { Recipe } from '@/app/components/RecipeCard';
 import { recipeAPI } from '@/app/lib/api';
 import { Navbar } from '@/app/components/Navbar';
-import { ProtectedRoute } from '@/app/components/ProtectedRoute';
+import { useAuthStore } from '@/app/lib/auth-store';
 
 export default function RecipeDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const recipeId = params.id as string;
+  const { initAuth } = useAuthStore();
   
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isLiked, setIsLiked] = useState(false);
   const [isDisliked, setIsDisliked] = useState(false);
+  const [comment, setComment] = useState('');
+  const [commentError, setCommentError] = useState('');
+  const [commentSuccess, setCommentSuccess] = useState('');
+  const [submittingComment, setSubmittingComment] = useState(false);
+
+  useEffect(() => {
+    initAuth();
+  }, [initAuth]);
 
   useEffect(() => {
     if (recipeId) {
@@ -44,7 +52,7 @@ export default function RecipeDetailPage() {
     if (!recipe) return;
     try {
       const updated = await recipeAPI.likeRecipe(recipe.id);
-      setRecipe(updated.data);
+      setRecipe(updated.data ?? { ...recipe, likes: recipe.likes + 1 });
       setIsLiked(!isLiked);
       setIsDisliked(false);
     } catch (err) {
@@ -56,7 +64,7 @@ export default function RecipeDetailPage() {
     if (!recipe) return;
     try {
       const updated = await recipeAPI.dislikeRecipe(recipe.id);
-      setRecipe(updated.data);
+      setRecipe(updated.data ?? { ...recipe, dislikes: recipe.dislikes + 1 });
       setIsDisliked(!isDisliked);
       setIsLiked(false);
     } catch (err) {
@@ -64,54 +72,78 @@ export default function RecipeDetailPage() {
     }
   };
 
+  const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!recipe) return;
+
+    const trimmedComment = comment.trim();
+    if (!trimmedComment) {
+      setCommentError('Please write a comment before submitting.');
+      setCommentSuccess('');
+      return;
+    }
+
+    try {
+      setSubmittingComment(true);
+      setCommentError('');
+      setCommentSuccess('');
+      const updated = await recipeAPI.commentRecipe(recipe.id, {
+        comment: trimmedComment,
+      });
+      setRecipe(updated.data ?? { ...recipe, comments: recipe.comments + 1 });
+      setComment('');
+      setCommentSuccess('Comment added.');
+    } catch (err) {
+      setCommentError('Failed to add comment');
+      console.error('Failed to comment on recipe', err);
+    } finally {
+      setSubmittingComment(false);
+    }
+  };
+
   if (loading) {
     return (
-      <ProtectedRoute>
-        <main>
-          <Navbar />
-          <div className="min-h-screen flex items-center justify-center">
-            <p className="text-xl text-gray-600">Loading recipe...</p>
-          </div>
-        </main>
-      </ProtectedRoute>
+      <main>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="text-xl text-gray-600">Loading recipe...</p>
+        </div>
+      </main>
     );
   }
 
   if (error || !recipe) {
     return (
-      <ProtectedRoute>
-        <main>
-          <Navbar />
-          <div className="min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-xl text-red-600 mb-4">{error || 'Recipe not found'}</p>
-              <Link
-                href="/recipes"
-                className="text-primary font-bold hover:underline"
-              >
-                Back to Recipes
-              </Link>
-            </div>
+      <main>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-xl text-red-600 mb-4">{error || 'Recipe not found'}</p>
+            <Link
+              href="/recipes"
+              className="text-primary font-bold hover:underline"
+            >
+              Back to Recipes
+            </Link>
           </div>
-        </main>
-      </ProtectedRoute>
+        </div>
+      </main>
     );
   }
 
   const username = recipe.user?.username ?? 'Unknown cook';
 
   return (
-    <ProtectedRoute>
-      <main>
-        <Navbar />
-        <div className="min-h-screen bg-light">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <Link
-              href="/recipes"
-              className="text-primary font-bold hover:underline mb-6 inline-flex items-center gap-2"
-            >
-              <ArrowLeft size={20} /> Back to Recipes
-            </Link>
+    <main>
+      <Navbar />
+      <div className="min-h-screen bg-light">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Link
+            href="/recipes"
+            className="text-primary font-bold hover:underline mb-6 inline-flex items-center gap-2"
+          >
+            <ArrowLeft size={20} /> Back to Recipes
+          </Link>
 
             <div className="bg-surface rounded-lg shadow-lg overflow-hidden">
               <div className="relative w-full h-96 bg-gray-200">
@@ -137,7 +169,7 @@ export default function RecipeDetailPage() {
 
                 <p className="text-gray-700 text-lg mb-6">{recipe.description}</p>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
                   <div className="bg-light p-4 rounded text-center flex flex-col items-center">
                     <Clock className="text-primary mb-2" size={28} />
                     <p className="text-gray-600">{recipe.time}</p>
@@ -154,9 +186,13 @@ export default function RecipeDetailPage() {
                     <ThumbsDown className="text-secondary mb-2" size={28} />
                     <p className="text-gray-600">{recipe.dislikes} dislikes</p>
                   </div>
+                  <div className="bg-light p-4 rounded text-center flex flex-col items-center">
+                    <MessageSquare className="text-primary mb-2" size={28} />
+                    <p className="text-gray-600">{recipe.comments} comments</p>
+                  </div>
                 </div>
 
-                <div className="flex gap-4 mb-8">
+                <div className="flex flex-wrap gap-4 mb-8">
                   <button
                     onClick={handleLike}
                     className={`px-6 py-2 rounded-lg font-bold transition flex items-center gap-2 ${
@@ -178,6 +214,36 @@ export default function RecipeDetailPage() {
                     <ThumbsDown size={18} /> Dislike
                   </button>
                 </div>
+
+                <form onSubmit={handleCommentSubmit} className="mb-8">
+                  <label
+                    htmlFor="comment"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Leave a comment
+                  </label>
+                  <textarea
+                    id="comment"
+                    value={comment}
+                    onChange={(event) => setComment(event.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Share what you think about this recipe..."
+                  />
+                  {commentError && (
+                    <p className="text-sm text-red-600 mt-2">{commentError}</p>
+                  )}
+                  {commentSuccess && (
+                    <p className="text-sm text-primary mt-2">{commentSuccess}</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={submittingComment}
+                    className="mt-3 px-6 py-2 bg-primary text-white font-bold rounded-lg hover:brightness-90 transition disabled:opacity-50"
+                  >
+                    {submittingComment ? 'Posting...' : 'Post Comment'}
+                  </button>
+                </form>
 
                 <div className="grid md:grid-cols-3 gap-8">
                   <div>
@@ -239,10 +305,9 @@ export default function RecipeDetailPage() {
                   </ol>
                 </div>
               </div>
-            </div>
           </div>
         </div>
-      </main>
-    </ProtectedRoute>
+      </div>
+    </main>
   );
 }
