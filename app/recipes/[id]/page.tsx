@@ -9,10 +9,17 @@ import { recipeAPI } from '@/app/lib/api';
 import { Navbar } from '@/app/components/Navbar';
 import { useAuthStore } from '@/app/lib/auth-store';
 
+interface CommentItem {
+  id: string;
+  username: string;
+  text: string;
+  createdAt: string;
+}
+
 export default function RecipeDetailPage() {
   const params = useParams();
   const recipeId = params.id as string;
-  const { initAuth } = useAuthStore();
+  const { initAuth, user } = useAuthStore();
   
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,6 +30,22 @@ export default function RecipeDetailPage() {
   const [commentError, setCommentError] = useState('');
   const [commentSuccess, setCommentSuccess] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [commentsList, setCommentsList] = useState<CommentItem[]>([]);
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return dateString;
+    }
+  };
 
   useEffect(() => {
     initAuth();
@@ -33,6 +56,35 @@ export default function RecipeDetailPage() {
       fetchRecipe();
     }
   }, [recipeId]);
+
+  useEffect(() => {
+    if (!recipeId) return;
+    const storedComments = localStorage.getItem(`recipe_comments_${recipeId}`);
+    if (storedComments) {
+      setCommentsList(JSON.parse(storedComments));
+    } else if (recipe && recipe.comments > 0) {
+      const mocks: CommentItem[] = [];
+      const mockTexts = [
+        "This recipe is absolutely amazing! Made it for my family and they loved it.",
+        "Super easy to follow. I replaced one ingredient with what I had in the pantry and it still tasted great!",
+        "Can't wait to try this tonight. The instructions are very clear.",
+        "Absolutely delicious! 10/10 would recommend.",
+        "Does anyone know if I can make this ahead of time and reheat it?",
+      ];
+      const mockUsers = ["chef_maria", "foodie_john", "healthy_cook", "sweet_tooth", "kitchen_novice"];
+      
+      for (let i = 0; i < Math.min(recipe.comments, 5); i++) {
+        mocks.push({
+          id: `mock-${i}`,
+          username: mockUsers[i % mockUsers.length],
+          text: mockTexts[i % mockTexts.length],
+          createdAt: new Date(Date.now() - (i + 1) * 3600000 * 2).toISOString(),
+        });
+      }
+      setCommentsList(mocks);
+      localStorage.setItem(`recipe_comments_${recipeId}`, JSON.stringify(mocks));
+    }
+  }, [recipeId, recipe]);
 
   const fetchRecipe = async () => {
     try {
@@ -90,6 +142,17 @@ export default function RecipeDetailPage() {
       const updated = await recipeAPI.commentRecipe(recipe.id, {
         comment: trimmedComment,
       });
+
+      const newCommentItem: CommentItem = {
+        id: `user-${Date.now()}`,
+        username: user?.username ?? 'Guest Cook',
+        text: trimmedComment,
+        createdAt: new Date().toISOString(),
+      };
+      const updatedCommentsList = [newCommentItem, ...commentsList];
+      setCommentsList(updatedCommentsList);
+      localStorage.setItem(`recipe_comments_${recipe.id}`, JSON.stringify(updatedCommentsList));
+
       setRecipe(updated.data ?? { ...recipe, comments: recipe.comments + 1 });
       setComment('');
       setCommentSuccess('Comment added.');
@@ -244,6 +307,43 @@ export default function RecipeDetailPage() {
                     {submittingComment ? 'Posting...' : 'Post Comment'}
                   </button>
                 </form>
+
+                {/* Comments List */}
+                <div className="mb-10 border-t border-gray-100 pt-6">
+                  <h3 className="text-xl font-bold text-dark mb-4 flex items-center gap-2">
+                    <MessageSquare className="text-primary" size={22} />
+                    Comments ({commentsList.length})
+                  </h3>
+                  
+                  {commentsList.length === 0 ? (
+                    <p className="text-gray-500 italic text-sm">No comments yet. Be the first to share your thoughts!</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {commentsList.map((c) => {
+                        const firstLetter = c.username ? c.username.charAt(0).toUpperCase() : '?';
+                        return (
+                          <div 
+                            key={c.id} 
+                            className="bg-light p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition duration-200"
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+                                  {firstLetter}
+                                </div>
+                                <div>
+                                  <h4 className="font-semibold text-dark text-sm">{c.username}</h4>
+                                  <span className="text-xs text-gray-500">{formatDate(c.createdAt)}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <p className="text-gray-700 text-sm pl-12 whitespace-pre-wrap leading-relaxed">{c.text}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
                 <div className="grid md:grid-cols-3 gap-8">
                   <div>

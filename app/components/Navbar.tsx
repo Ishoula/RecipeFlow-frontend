@@ -40,6 +40,12 @@ export function Navbar() {
                 >
                   <PlusCircle size={18} /> New Recipe
                 </Link>
+                <Link
+                  href="/recipes/my"
+                  className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-medium"
+                >
+                  <ChefHat size={18} /> My Recipes
+                </Link>
                 <div className="flex items-center gap-4 ml-2 pl-4 border-l border-gray-200">
                   <div className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full">
                     <User size={16} className="text-primary" />
