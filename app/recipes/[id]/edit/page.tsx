@@ -204,7 +204,7 @@ export default function EditRecipePage() {
       <main>
         <Navbar />
         <div className="min-h-screen bg-light">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-full sm:max-w-lg lg:max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <Link
               href="/recipes/my"
               className="text-primary font-bold hover:underline mb-6 inline-flex items-center gap-2"

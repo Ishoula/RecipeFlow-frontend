@@ -200,7 +200,7 @@ export default function RecipeDetailPage() {
     <main>
       <Navbar />
       <div className="min-h-screen bg-light">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-full sm:max-w-lg lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <Link
             href="/recipes"
             className="text-primary font-bold hover:underline mb-6 inline-flex items-center gap-2"
