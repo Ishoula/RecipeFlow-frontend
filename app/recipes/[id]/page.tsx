@@ -8,6 +8,7 @@ import { Recipe } from '@/app/components/RecipeCard';
 import { recipeAPI } from '@/app/lib/api';
 import { Navbar } from '@/app/components/Navbar';
 import { useAuthStore } from '@/app/lib/auth-store';
+import { RecipeDetailSkeleton } from '@/app/components/Skeletons';
 
 interface CommentItem {
   id: string;
@@ -165,14 +166,7 @@ export default function RecipeDetailPage() {
   };
 
   if (loading) {
-    return (
-      <main>
-        <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
-          <p className="text-xl text-gray-600">Loading recipe...</p>
-        </div>
-      </main>
-    );
+    return <RecipeDetailSkeleton />;
   }
 
   if (error || !recipe) {

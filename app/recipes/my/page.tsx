@@ -9,6 +9,7 @@ import { recipeAPI } from '@/app/lib/api';
 import { Navbar } from '@/app/components/Navbar';
 import { useAuthStore } from '@/app/lib/auth-store';
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
+import { RecipeGridSkeleton, RecipeListPageSkeleton } from '@/app/components/Skeletons';
 
 export default function MyRecipesPage() {
   const router = useRouter();
@@ -59,7 +60,7 @@ export default function MyRecipesPage() {
   };
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute fallback={<RecipeListPageSkeleton />}>
       <main className="min-h-screen bg-light">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -95,9 +96,7 @@ export default function MyRecipesPage() {
           )}
 
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-xl text-gray-600">Loading your recipes...</p>
-            </div>
+            <RecipeGridSkeleton />
           ) : recipes.length === 0 ? (
             <div className="bg-white rounded-xl shadow-md p-12 text-center max-w-xl mx-auto border border-gray-100">
               <ChefHat size={64} className="text-gray-300 mx-auto mb-4" />

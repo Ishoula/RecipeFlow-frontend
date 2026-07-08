@@ -7,6 +7,7 @@ import { RecipeCard, Recipe } from '@/app/components/RecipeCard';
 import { recipeAPI } from '@/app/lib/api';
 import { Navbar } from '@/app/components/Navbar';
 import { useAuthStore } from '@/app/lib/auth-store';
+import { RecipeGridSkeleton } from '@/app/components/Skeletons';
 
 export default function RecipesPage() {
   const router = useRouter();
@@ -77,9 +78,7 @@ export default function RecipesPage() {
           )}
 
           {loading ? (
-            <div className="text-center py-12">
-              <p className="text-xl text-gray-600">Loading recipes...</p>
-            </div>
+            <RecipeGridSkeleton />
           ) : recipes.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-xl text-gray-600 mb-4">

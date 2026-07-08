@@ -9,6 +9,7 @@ import { recipeAPI } from '@/app/lib/api';
 import { useAuthStore } from '@/app/lib/auth-store';
 import { Navbar } from '@/app/components/Navbar';
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
+import { RecipeFormSkeleton } from '@/app/components/Skeletons';
 
 const MAX_VARCHAR_LENGTH = 255;
 
@@ -113,7 +114,7 @@ export default function NewRecipePage() {
   };
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute fallback={<RecipeFormSkeleton />}>
       <main>
         <Navbar />
         <div className="min-h-screen bg-light">

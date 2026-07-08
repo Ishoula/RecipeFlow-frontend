@@ -3,23 +3,30 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/app/lib/auth-store";
+import { RecipeListPageSkeleton } from "@/app/components/Skeletons";
 
-export function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export function ProtectedRoute({
+  children,
+  fallback = <RecipeListPageSkeleton />,
+}: {
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}) {
   const router = useRouter();
-  const { isAuthenticated, initAuth } = useAuthStore();
+  const { isAuthenticated, hasInitialized, initAuth } = useAuthStore();
 
   useEffect(() => {
     initAuth();
   }, [initAuth]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (hasInitialized && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [hasInitialized, isAuthenticated, router]);
 
-  if (!isAuthenticated) {
-    return null;
+  if (!hasInitialized || !isAuthenticated) {
+    return <>{fallback}</>;
   }
 
   return <>{children}</>;

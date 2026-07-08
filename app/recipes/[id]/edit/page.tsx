@@ -9,6 +9,7 @@ import { recipeAPI } from '@/app/lib/api';
 import { useAuthStore } from '@/app/lib/auth-store';
 import { Navbar } from '@/app/components/Navbar';
 import { ProtectedRoute } from '@/app/components/ProtectedRoute';
+import { RecipeFormSkeleton } from '@/app/components/Skeletons';
 
 const MAX_VARCHAR_LENGTH = 255;
 
@@ -164,13 +165,8 @@ export default function EditRecipePage() {
 
   if (loading) {
     return (
-      <ProtectedRoute>
-        <main className="min-h-screen bg-light">
-          <Navbar />
-          <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
-            <p className="text-xl text-gray-600">Loading recipe details...</p>
-          </div>
-        </main>
+      <ProtectedRoute fallback={<RecipeFormSkeleton titleWidth="w-48" />}>
+        <RecipeFormSkeleton titleWidth="w-48" />
       </ProtectedRoute>
     );
   }
@@ -200,7 +196,7 @@ export default function EditRecipePage() {
   }
 
   return (
-    <ProtectedRoute>
+    <ProtectedRoute fallback={<RecipeFormSkeleton titleWidth="w-48" />}>
       <main>
         <Navbar />
         <div className="min-h-screen bg-light">
