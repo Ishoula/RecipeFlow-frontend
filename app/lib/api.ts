@@ -27,6 +27,12 @@ export const authAPI = {
 
     login: (data: { username: string; password: string }) =>
         apiClient.post('/v1/auth/login', data),
+
+    sendVerificationOTP: (email: string) =>
+        apiClient.post('/v1/auth/send-otp', { email }),
+
+    verifyEmailOTP: (data: { email: string; otp: string }) =>
+        apiClient.post('/v1/auth/verify-otp', data),
 };
 
 // Recipe APIs
