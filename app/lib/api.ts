@@ -37,7 +37,8 @@ export const authAPI = {
 
 // Recipe APIs
 export const recipeAPI = {
-    getAllRecipes: () => apiClient.get('/recipes'),
+    getAllRecipes: (params?: { page?: number; size?: number; sortBy?: string; sortDir?: string }) =>
+        apiClient.get('/recipes', { params }),
 
     getRecipeById: (id: number) => apiClient.get(`/recipes/${id}`),
 

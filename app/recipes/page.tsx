@@ -13,6 +13,9 @@ export default function RecipesPage() {
   const router = useRouter();
   const { initAuth, isAuthenticated } = useAuthStore();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -22,13 +25,16 @@ export default function RecipesPage() {
 
   useEffect(() => {
     fetchRecipes();
-  }, []);
+  }, [currentPage]);
 
   const fetchRecipes = async () => {
     try {
       setLoading(true);
-      const response = await recipeAPI.getAllRecipes();
-      setRecipes(response.data);
+      const response = await recipeAPI.getAllRecipes({ page: currentPage, size: 20 });
+      // Page<Recipe> from Spring has .content, .totalPages, .totalElements
+      setRecipes(response.data.content || []);
+      setTotalPages(response.data.totalPages || 0);
+      setTotalElements(response.data.totalElements || 0);
       setError('');
     } catch (err: any) {
       setError('Failed to load recipes');
@@ -101,15 +107,40 @@ export default function RecipesPage() {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recipes.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                  onClickRecipe={handleRecipeClick}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recipes.map((recipe) => (
+                  <RecipeCard
+                    key={recipe.id}
+                    recipe={recipe}
+                    onClickRecipe={handleRecipeClick}
+                  />
+                ))}
+              </div>
+              
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-12">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
+                    disabled={currentPage === 0}
+                    className="px-4 py-2 bg-primary text-white font-bold rounded-lg hover:brightness-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-gray-700 font-medium">
+                    Page {currentPage + 1} of {totalPages} ({totalElements} recipes)
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
+                    disabled={currentPage === totalPages - 1}
+                    className="px-4 py-2 bg-primary text-white font-bold rounded-lg hover:brightness-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
